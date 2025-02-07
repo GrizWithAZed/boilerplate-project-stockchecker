@@ -49,8 +49,8 @@ module.exports = function (app) {
           results.push(stockData);
         }
 
-        // Return JSON response in correct format
-        res.json(stocks.length === 1 ? results[0] : results);
+        // Return JSON response in correct format with 'stockData' property
+        res.json({ stockData: stocks.length === 1 ? results[0] : results });
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
