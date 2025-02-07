@@ -49,6 +49,15 @@ module.exports = function (app) {
           results.push(stockData);
         }
 
+        // If two stocks are provided, calculate relative likes
+        if (results.length === 2) {
+          let rel_likes = results[0].likes - results[1].likes;
+          results[0].rel_likes = rel_likes;
+          results[1].rel_likes = -rel_likes;
+          delete results[0].likes;
+          delete results[1].likes;
+        }
+
         // Return JSON response in correct format with 'stockData' property
         res.json({ stockData: stocks.length === 1 ? results[0] : results });
       } catch (error) {
