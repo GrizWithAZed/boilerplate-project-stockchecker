@@ -26,13 +26,21 @@ module.exports = function (app) {
         let hashedIP = hashIP(userIP); // Anonymize IP
 
         for (let s of stocks) {
-          let response = await axios.get(`https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${s}/quote`);
+          let response;
+          try {
+            response = await axios.get(`https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${s}/quote`);
+          } catch (error) {
+            return res.status(404).json({ error: 'Stock not found' });
+          }
+          
           if (!response.data || typeof response.data.latestPrice !== 'number') {
             return res.status(404).json({ error: 'Stock not found' });
           }
 
           // Ensure stockLikes exists
-          stockLikes[s] = stockLikes[s] || new Set();
+          if (!stockLikes[s]) {
+            stockLikes[s] = new Set();
+          }
 
           let stockData = {
             stock: String(s.toUpperCase()), // Ensure stock symbol is a string
@@ -54,11 +62,8 @@ module.exports = function (app) {
           let likes1 = results[0].likes;
           let likes2 = results[1].likes;
 
-          results[0].rel_likes = likes1 - likes2;
-          results[1].rel_likes = likes2 - likes1;
-
-          delete results[0].likes;
-          delete results[1].likes;
+          results[0] = { stock: results[0].stock, price: results[0].price, rel_likes: likes1 - likes2 };
+          results[1] = { stock: results[1].stock, price: results[1].price, rel_likes: likes2 - likes1 };
         }
 
         // Return JSON response in correct format with 'stockData' property
