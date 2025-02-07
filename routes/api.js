@@ -19,7 +19,7 @@ module.exports = function (app) {
       try {
         let { stock, like } = req.query;
         if (!stock) return res.status(400).json({ error: 'Stock symbol required' });
-
+        
         let stocks = Array.isArray(stock) ? stock : [stock]; // Ensure handling for single and multiple stocks
         let results = [];
         let userIP = req.ip || req.connection.remoteAddress; // Get client IP

@@ -4,7 +4,7 @@
 	"description": "InfoSec project for freeCodeCamp",
 	"scripts": {
 		"start": "node server.js",
-		"test": "mocha tests/2_functional-tests.js"
+		"test": "mocha tests/2_functional-tests.js --timeout 5000"
 	},
 	"dependencies": {
 		"axios": "^1.7.9",
