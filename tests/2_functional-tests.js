@@ -4,13 +4,14 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
+const { it } = require('mocha');
 
 chai.use(chaiHttp);
 
-suite('Functional Tests', function () {
+describe('Functional Tests', function () {
     
     // Test for viewing one stock
-    test('Viewing one stock: GET request to /api/stock-prices/', function (done) {
+    it('Viewing one stock: GET request to /api/stock-prices/', function (done) {
         chai.request(server)
             .get('/api/stock-prices?stock=GOOG')
             .end((err, res) => {
@@ -26,7 +27,7 @@ suite('Functional Tests', function () {
     });
 
     // Test for viewing one stock and liking it
-    test('Viewing one stock and liking it: GET request to /api/stock-prices/', function (done) {
+    it('Viewing one stock and liking it: GET request to /api/stock-prices/', function (done) {
         chai.request(server)
             .get('/api/stock-prices?stock=GOOG&like=true')
             .end((err, res) => {
@@ -42,7 +43,7 @@ suite('Functional Tests', function () {
     });
 
     // Test for viewing the same stock and liking it again (should NOT increase likes)
-    test('Viewing the same stock and liking it again: GET request to /api/stock-prices/', function (done) {
+    it('Viewing the same stock and liking it again: GET request to /api/stock-prices/', function (done) {
         chai.request(server)
             .get('/api/stock-prices?stock=GOOG&like=true')
             .end((err, res) => {
@@ -57,7 +58,7 @@ suite('Functional Tests', function () {
     });
 
     // Test for viewing two stocks
-    test('Viewing two stocks: GET request to /api/stock-prices/', function (done) {
+    it('Viewing two stocks: GET request to /api/stock-prices/', function (done) {
         chai.request(server)
             .get('/api/stock-prices?stock=GOOG&stock=MSFT')
             .end((err, res) => {
@@ -75,7 +76,7 @@ suite('Functional Tests', function () {
     });
 
     // Test for viewing two stocks and liking them
-    test('Viewing two stocks and liking them: GET request to /api/stock-prices/', function (done) {
+    it('Viewing two stocks and liking them: GET request to /api/stock-prices/', function (done) {
         chai.request(server)
             .get('/api/stock-prices?stock=GOOG&stock=MSFT&like=true')
             .end((err, res) => {
