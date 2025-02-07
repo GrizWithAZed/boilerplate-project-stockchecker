@@ -27,14 +27,14 @@ module.exports = function (app) {
 
         for (let s of stocks) {
           let response = await axios.get(`https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${s}/quote`);
-          if (!response.data || !response.data.latestPrice) {
+          if (!response.data || typeof response.data.latestPrice !== 'number') {
             return res.status(404).json({ error: 'Stock not found' });
           }
 
           let stockData = {
-            stock: s.toUpperCase(),
-            price: response.data.latestPrice,
-            likes: stockLikes[s] ? stockLikes[s].size : 0 // Get the number of unique likes
+            stock: String(s.toUpperCase()), // Ensure stock symbol is a string
+            price: Number(response.data.latestPrice), // Ensure price is a number
+            likes: stockLikes[s] ? Number(stockLikes[s].size) : 0 // Ensure likes are a number
           };
 
           // Handle the 'like' feature
@@ -43,7 +43,7 @@ module.exports = function (app) {
               stockLikes[s] = new Set(); // Store likes using a Set to prevent duplicates
             }
             stockLikes[s].add(hashedIP); // Save the like using the hashed IP
-            stockData.likes = stockLikes[s].size;
+            stockData.likes = Number(stockLikes[s].size);
           }
 
           results.push(stockData);
