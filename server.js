@@ -13,6 +13,14 @@ const app = express();
 
 // Security middleware
 app.use(helmet()); // Secure HTTP headers
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'"],
+        imgSrc: ["'self'"]
+    }
+}));
 app.use(cors({ origin: '*' })); // Allow cross-origin requests (For FCC testing purposes only)
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
