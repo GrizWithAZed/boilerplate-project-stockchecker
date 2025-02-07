@@ -19,7 +19,7 @@ module.exports = function (app) {
       try {
         let { stock, like } = req.query;
         if (!stock) return res.status(400).json({ error: 'Stock symbol required' });
-        
+
         let stocks = Array.isArray(stock) ? stock : [stock]; // Ensure handling for single and multiple stocks
         let results = [];
         let userIP = req.ip || req.connection.remoteAddress; // Get client IP
@@ -31,6 +31,9 @@ module.exports = function (app) {
             return res.status(404).json({ error: 'Stock not found' });
           }
 
+          // Ensure stockLikes exists
+          stockLikes[s] = stockLikes[s] || new Set();
+
           let stockData = {
             stock: String(s.toUpperCase()), // Ensure stock symbol is a string
             price: Number(response.data.latestPrice), // Ensure price is a number
@@ -39,9 +42,6 @@ module.exports = function (app) {
 
           // Handle the 'like' feature
           if (like === 'true') {
-            if (!stockLikes[s]) {
-              stockLikes[s] = new Set(); // Store likes using a Set to prevent duplicates
-            }
             stockLikes[s].add(hashedIP); // Save the like using the hashed IP
             stockData.likes = Number(stockLikes[s].size);
           }
@@ -51,9 +51,12 @@ module.exports = function (app) {
 
         // If two stocks are provided, calculate relative likes
         if (results.length === 2) {
-          let rel_likes = results[0].likes - results[1].likes;
-          results[0].rel_likes = rel_likes;
-          results[1].rel_likes = -rel_likes;
+          let likes1 = results[0].likes;
+          let likes2 = results[1].likes;
+
+          results[0].rel_likes = likes1 - likes2;
+          results[1].rel_likes = likes2 - likes1;
+
           delete results[0].likes;
           delete results[1].likes;
         }
